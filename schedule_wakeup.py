@@ -35,6 +35,9 @@ RECEIVERS_MAP = {
     "Nick":  "whatsapp:+919719239619",
     "Anmol":  "whatsapp:+919343959758",
     "Bhat":    "whatsapp:+917774006757",
+    "Tyagi":   "whatsapp:+916397022313",
+    "Mohta":   "whatsapp:+918389940442",
+    "Gadia":   "whatsapp:+919325369577",
 }
 
 # 3. KEEP TRACK OF ALREADY-SCHEDULED ROWS (in-memory)
@@ -46,7 +49,7 @@ def send_wakeup_message(name, location, importance, phone_numbers):
     """
     Sends the formatted WhatsApp message to all phone_numbers in the list.
     """
-    message_body = f"*{name}* ko utha do, *{location}* pe so rha h. Bol rha tha ki *{importance}*."
+    message_body = f"-----\n*{name}* ko utha do, *{location}* mein so rha h.\nBol rha tha ki *{importance}*."
     
     for number in phone_numbers:
         client.messages.create(
@@ -54,14 +57,14 @@ def send_wakeup_message(name, location, importance, phone_numbers):
             from_=from_whatsapp_number,
             to=number
         )
-        print(f"Sent message to {number} for {name} at {datetime.now()}\n")
+        print(f"Sent message to {number} for {name} at {datetime.now().strftime('%H:%M')}\n")
 
 
 def send_reminder_message(name, phone_numbers):
     """
     Sends a reminder message after the specified delay.
     """
-    message_body = f"** Reminder! **\nCheck krlo ki *{name}* utha ki nhi."
+    message_body = f"** Reminder! **\nCheck krlo ki *{name}* utha ki nhi.\n-----"
     
     for number in phone_numbers:
         client.messages.create(
@@ -69,12 +72,12 @@ def send_reminder_message(name, phone_numbers):
             from_=from_whatsapp_number,
             to=number
         )
-        print(f"Sent reminder to {number} for {name} at {datetime.now()}\n")
+        print(f"Sent reminder to {number} for {name} at {datetime.now().strftime('%H:%M')}\n")
 
 
 # 5. SCHEDULE MESSAGES FOR EACH ROW IN THE SHEET
 def schedule_all_messages():
-    print(f"Fetching latest sheet data at {datetime.now()}\n")
+    print(f"Fetching latest sheet data at {datetime.now().strftime('%H:%M')}\n")
     response = requests.get(CSV_URL)
     decoded_content = response.content.decode("utf-8")
     csv_data = list(csv.reader(decoded_content.splitlines(), delimiter=","))
@@ -177,7 +180,7 @@ scheduler = BackgroundScheduler()
 schedule_all_messages()
 
 # Re-run every 1 minute (adjust as needed) to catch new form entries
-scheduler.add_job(schedule_all_messages, 'interval', minutes=15)
+scheduler.add_job(schedule_all_messages, 'interval', minutes=2)
 
 # Start the scheduler
 scheduler.start()
