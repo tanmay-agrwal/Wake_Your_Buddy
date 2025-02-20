@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wake Your Buddy</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+  <style>
+    /* Basic reset and box-sizing */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body styling with a subtle gradient background */
+    body {
+      background: linear-gradient(135deg, #ece9e6, #ffffff);
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    /* Header styling */
+    header {
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: 3em;
+      color: #2c3e50;
+      letter-spacing: 2px;
+      margin-bottom: 40px;
+    }
+
+    /* Container to hold all content */
+    .container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Shared container styles for sections */
+    .time-checker, .form-container {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+      padding: 30px;
+    }
+
+    /* Time-checker section styles */
+    .time-checker h2 {
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .time-checker label {
+      font-weight: 500;
+      margin-bottom: 10px;
+      display: block;
+      color: #34495e;
+    }
+
+    .time-checker input[type="time"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #bdc3c7;
+      border-radius: 5px;
+    }
+
+    #timeLeft {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.55em;
+      color: #7f8c8d;
+    }
+
+    /* Responsive iframe styling for the Google Form */
+    iframe {
+      width: 100%;
+      height: 1800px; /* Adjust height as needed */
+      border: none;
+      border-radius: 8px;
+    }
+
+    /* Thank-you message styling */
+    .thank-you {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1em;
+      color: #95a5a6;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 class="page-title">⏰  Wake Your Buddy  ⏰</h1>
+  </header>
+
+  <div class="container">
+    <!-- Section: Local "time left" checker -->
+    <div class="time-checker">
+      <h2>AM/PM to 24 Hours Conversion (Optional)</h2>
+      <label for="localWakeTime">Input Wake-up Time (12-hour format):</label>
+      <input type="time" id="localWakeTime" />
+      <div id="timeLeft"></div>
+    </div>
+
+    <!-- Section: Embedded Google Form -->
+    <div class="form-container">
+      <iframe 
+        src="https://docs.google.com/forms/d/e/1FAIpQLSc5BcoKu2K286clvKOys3ejSC9DLxBkRo6lzznm717df8GLgw/viewform?embedded=true" 
+        allowfullscreen
+      >
+        Loading…
+      </iframe>
+    </div>
+
+    <!-- Thanks message -->
+    <div class="thank-you">
+      <p>Concept by Chota Snek 🐍, Implemented by Tangent 🏋️‍♂️</p>
+    </div>
+  </div>
+
+  <script>
+    const localWakeTime = document.getElementById("localWakeTime");
+    const timeLeftDisplay = document.getElementById("timeLeft");
+
+    function updateTimeLeft() {
+      const wakeupValue = localWakeTime.value;
+      if (!wakeupValue) {
+        timeLeftDisplay.textContent = "";
+        return;
+      }
+      
+      const [wakeHour, wakeMinute] = wakeupValue.split(":").map(Number);
+      const now = new Date();
+      let wakeupDate = new Date();
+      wakeupDate.setHours(wakeHour, wakeMinute, 0, 0);
+
+      if (wakeupDate <= now) {
+        wakeupDate.setDate(wakeupDate.getDate() + 1);
+      }
+
+      const diffMs = wakeupDate - now;
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+      timeLeftDisplay.innerHTML = `
+        <strong>You selected:</strong> ${wakeupValue} (24-hour format)<br />
+        <strong>Time left for wakeup:</strong> ${diffHours} hour(s) and ${diffMinutes} minute(s)
+      `;
+    }
+
+    localWakeTime.addEventListener("input", updateTimeLeft);
+  </script>
+</body>
+</html>
