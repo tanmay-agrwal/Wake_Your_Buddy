@@ -49,7 +49,7 @@ def send_wakeup_message(name, location, importance, phone_numbers):
     """
     Sends the formatted WhatsApp message to all phone_numbers in the list.
     """
-    message_body = f"-----\n*{name}* ko utha do, *{location}* mein so rha h.\nBol rha tha ki *{importance}*."
+    message_body = f"-----\n{name} ko utha do, *{location}* mein so rha h.\nBol rha tha ki *{importance}*."
     
     for number in phone_numbers:
         client.messages.create(
@@ -57,7 +57,7 @@ def send_wakeup_message(name, location, importance, phone_numbers):
             from_=from_whatsapp_number,
             to=number
         )
-        print(f"Sent message to {number} for {name} at {datetime.now().strftime('%H:%M')}\n")
+        print(f"Sent message to {number} for {name} at {datetime.now()}\n")
 
 
 def send_reminder_message(name, phone_numbers):
@@ -72,12 +72,12 @@ def send_reminder_message(name, phone_numbers):
             from_=from_whatsapp_number,
             to=number
         )
-        print(f"Sent reminder to {number} for {name} at {datetime.now().strftime('%H:%M')}\n")
+        print(f"Sent reminder to {number} for {name} at {datetime.now()}\n")
 
 
 # 5. SCHEDULE MESSAGES FOR EACH ROW IN THE SHEET
 def schedule_all_messages():
-    print(f"Fetching latest sheet data at {datetime.now().strftime('%H:%M')}\n")
+    print(f"Fetching latest sheet data at {datetime.now()}\n")
     response = requests.get(CSV_URL)
     decoded_content = response.content.decode("utf-8")
     csv_data = list(csv.reader(decoded_content.splitlines(), delimiter=","))
